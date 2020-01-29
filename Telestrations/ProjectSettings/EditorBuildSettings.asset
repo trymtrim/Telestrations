@@ -9,9 +9,9 @@ EditorBuildSettings:
     path: Assets/Scenes/StartScene.unity
     guid: 99c9720ab356a0642a771bea13969a05
   - enabled: 1
-    path: Assets/Scenes/GameBrowserScene.unity
-    guid: f16fff9285805ec4184bfca016b31585
+    path: Assets/Scenes/LobbyScene.unity
+    guid: 4ffbd7c4f68f79a4daf307515c5ea7a1
   - enabled: 1
-    path: Assets/Scenes/CreateGameScene.unity
-    guid: 14f4c98264c9e7843bcb41c9259958fc
+    path: Assets/Scenes/OnlineGameScene.unity
+    guid: 363b67ab080330c41b7f179e920ae68f
   m_configObjects: {}

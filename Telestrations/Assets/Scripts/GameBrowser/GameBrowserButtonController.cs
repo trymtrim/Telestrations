@@ -1,24 +1,31 @@
-﻿using Telestrations.Server;
+﻿using Mirror;
+using Telestrations.Server;
 using UnityEngine;
 using UnityEngine.UI;
 
-[RequireComponent(typeof(Button))]
-public class GameBrowserButtonController : MonoBehaviour
+namespace Telestrations.GameBrowser
 {
-    public string gameIpAndPort;
-
-    public void Initialize(string gameName, string gameIpAndPort)
+    [RequireComponent(typeof(Button))]
+    public class GameBrowserButtonController : MonoBehaviour
     {
-        this.gameIpAndPort = gameIpAndPort;
+        public string GameIp;
 
-        Button button = GetComponent<Button>();
+        public void Initialize(string gameName, string gameIp)
+        {
+            GameIp = gameIp;
 
-        button.onClick.AddListener(JoinGame);
-        button.GetComponentInChildren<Text>().text = gameName;
-    }
+            Button button = GetComponent<Button>();
 
-    private void JoinGame()
-    {
-        Client.ClientConnection.ConnectToServer(gameIpAndPort);
+            button.onClick.AddListener(JoinGame);
+            button.GetComponentInChildren<Text>().text = gameName;
+        }
+
+        private void JoinGame()
+        {
+            NetworkManager networkManager = NetworkManager.singleton;
+
+            networkManager.networkAddress = GameIp;
+            networkManager.StartClient();
+        }
     }
 }

@@ -1,45 +1,47 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using Telestrations.GameBrowser;
+﻿using UnityEngine;
 
-public class GameBrowserView : MonoBehaviour
+namespace Telestrations.GameBrowser
 {
-    [Header("Scene Objects")]
-    [SerializeField] private GameBrowserController _gameBrowserController;
-
-    [Header("Prefabs")]
-    [SerializeField] private GameObject _gameBrowserButtonPrefab;
-
-    private void Awake()
+    public class GameBrowserView : MonoBehaviour
     {
-        _gameBrowserController.OnGameFound += OnGameFound;
-        _gameBrowserController.OnGameRemoved += OnGameRemoved;
-    }
+        [Header("Scene Objects")]
+        [SerializeField] private GameBrowserController _gameBrowserController;
 
-    private void OnGameFound(string gameName, string gameIpAndPort)
-    {
-        GameBrowserButtonController buttonController = Instantiate(_gameBrowserButtonPrefab, transform).GetComponent<GameBrowserButtonController>();
-        buttonController.Initialize(gameName, gameIpAndPort);
-    }
+        [Header("Prefabs")]
+        [SerializeField] private GameObject _gameBrowserButtonPrefab;
 
-    private void OnGameRemoved(string gameIpAndPort)
-    {
-        for (int i = 0; i < transform.childCount; i++)
+        private void Start()
         {
-            GameBrowserButtonController buttonController = transform.GetChild(i).GetComponent<GameBrowserButtonController>();
+            _gameBrowserController = GameBrowserController.Singleton;
 
-            if (buttonController.gameIpAndPort == gameIpAndPort)
+            _gameBrowserController.OnGameFound += OnGameFound;
+            _gameBrowserController.OnGameRemoved += OnGameRemoved;
+        }
+
+        private void OnGameFound(string gameName, string gameIp)
+        {
+            GameBrowserButtonController buttonController = Instantiate(_gameBrowserButtonPrefab, transform).GetComponent<GameBrowserButtonController>();
+            buttonController.Initialize(gameName, gameIp);
+        }
+
+        private void OnGameRemoved(string gameIp)
+        {
+            for (int i = 0; i < transform.childCount; i++)
             {
-                Destroy(buttonController.gameObject);
-                break;
+                GameBrowserButtonController buttonController = transform.GetChild(i).GetComponent<GameBrowserButtonController>();
+
+                if (buttonController.GameIp == gameIp)
+                {
+                    Destroy(buttonController.gameObject);
+                    break;
+                }
             }
         }
-    }
 
-    private void OnDestroy()
-    {
-        _gameBrowserController.OnGameFound -= OnGameFound;
-        _gameBrowserController.OnGameRemoved -= OnGameRemoved;
+        private void OnDestroy()
+        {
+            _gameBrowserController.OnGameFound -= OnGameFound;
+            _gameBrowserController.OnGameRemoved -= OnGameRemoved;
+        }
     }
 }

@@ -1,15 +1,15 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using System.Collections.Generic;
 using Telestrations.Server;
 using System;
 
 namespace Telestrations.GameBrowser
 {
-    //TODO: Might have to change to .net 3.5 for it to work on mobile
+    //TODO: Might have to change to .net 3.5 for it to work on mobile (server creation)
 
-    public class GameBrowserController : MonoBehaviour
+    public class GameBrowserController : IDisposable
     {
+        public static GameBrowserController Singleton;
+
         public Action<string, string> OnGameFound;
         public Action<string> OnGameRemoved;
 
@@ -17,11 +17,14 @@ namespace Telestrations.GameBrowser
 
         private List<string> _availableGameServers = new List<string>();
 
-        private void Start()
+        public GameBrowserController()
         {
+            Singleton = this;
+
             _serverFinder = new ServerFinder();
 
             _serverFinder.OnGameServerFound += OnGameServerFound;
+            _serverFinder.OnGameServerRemoved += OnGameServerRemoved;
         }
 
         private void OnGameServerFound(string gameName, string gameServerIp)
@@ -42,14 +45,7 @@ namespace Telestrations.GameBrowser
             }
         }
 
-        public void LeaveGameBrowser()
-        {
-            Destroy(Client.ClientConnection.gameObject);
-
-            SceneChanger.StaticChangeScene("StartScene");
-        }
-
-        private void OnDestroy()
+        public void Dispose()
         {
             _serverFinder.OnGameServerFound -= OnGameServerFound;
             _serverFinder.Dispose();

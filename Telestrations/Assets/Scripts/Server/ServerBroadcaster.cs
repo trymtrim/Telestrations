@@ -9,6 +9,8 @@ namespace Telestrations.Server
 {
     public class ServerBroadcaster : IDisposable
     {
+        private float _broadcastInterval = 1.0f;
+
         private bool _isActive = true;
 
         public ServerBroadcaster()
@@ -23,7 +25,7 @@ namespace Telestrations.Server
             while (_isActive)
             {
                 Broadcast();
-                await Task.Delay(2000);
+                await Task.Delay((int)(_broadcastInterval * 1000.0f));
             }
         }
 
@@ -31,7 +33,7 @@ namespace Telestrations.Server
         {
             UdpClient client = new UdpClient();
             IPEndPoint ip = new IPEndPoint(IPAddress.Broadcast, 15000);
-            byte[] bytes = Encoding.ASCII.GetBytes(Server.ServerConnection.IpAndPort);
+            byte[] bytes = Encoding.ASCII.GetBytes(ServerHelper.GetLocalIPAddress());
             client.Send(bytes, bytes.Length, ip);
             client.Close();
         }
