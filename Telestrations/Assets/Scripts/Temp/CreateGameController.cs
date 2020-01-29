@@ -3,18 +3,18 @@ using Telestrations.Server;
 
 public class CreateGameController : MonoBehaviour
 {
+    private Server _serverConnection;
     private ServerBroadcaster _serverBroadcaster;
 
     private void Start()
     {
-        new Server();
-
+        _serverConnection = new Server();
         _serverBroadcaster = new ServerBroadcaster();
     }
 
     private void OnDestroy()
     {
-        Server.ServerConnection.Dispose(); //Temp
+        _serverConnection.Dispose(); //Temp
         _serverBroadcaster.Dispose();
     }
 }

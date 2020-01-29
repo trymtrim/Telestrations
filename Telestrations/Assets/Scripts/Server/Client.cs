@@ -8,10 +8,12 @@ namespace Telestrations.Server
     {
         public static Client ClientConnection;
 
-        public WebSocket server;
+        public Action<string> OnMessageFromServer = delegate { };
+        public Action OnConnectedToServer = delegate { };
 
-        //private string _ip = "192.168.1.116";
-        //private string _port = "9000";
+        private WebSocket _server;
+
+        private string _ipAndPort;
 
         private void Awake()
         {
@@ -31,24 +33,26 @@ namespace Telestrations.Server
 
         private IEnumerator Connect(string ipAndPort)
         {
-            server = new WebSocket(new Uri($"ws://{ipAndPort}"));
+            _ipAndPort = ipAndPort;
 
-            yield return StartCoroutine(server.Connect());
+            _server = new WebSocket(new Uri($"ws://{ipAndPort}"));
+
+            yield return StartCoroutine(_server.Connect());
 
             OnConnected(ipAndPort);
 
             while (true)
             {
-                string message = server.ReceiveString();
+                string message = _server.ReceiveString();
 
                 if (message != null)
                 {
                     OnMessage(message);
                 }
 
-                if (server.GetError() != null)
+                if (_server.GetError() != null)
                 {
-                    Debug.LogError("Error: " + server.GetError());
+                    Debug.LogError("Error: " + _server.GetError());
                     OnDisconnected(ipAndPort);
                     break;
                 }
@@ -56,11 +60,19 @@ namespace Telestrations.Server
                 yield return 0;
             }
 
-            server.Close();
+            _server.Close();
+        }
+
+        private void DisconnectFromServer()
+        {
+            _server.Close();
+            _server = null;
         }
 
         private void OnConnected(string ipAndPort)
         {
+            OnConnectedToServer.Invoke();
+
             Debug.Log($"Connected to game server [{ipAndPort}]");
         }
 
@@ -71,16 +83,18 @@ namespace Telestrations.Server
 
         private void OnMessage(string message)
         {
+            OnMessageFromServer.Invoke(message);
+
             Debug.Log(message);
         }
 
         private void OnDestroy()
         {
-            if (server == null)
+            if (_server == null)
                 return;
 
-            server.Close();
-            server = null;
+            _server.Close();
+            _server = null;
         }
     }
 }

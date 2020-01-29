@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-[RequireComponent(typeof (Button))]
+[RequireComponent(typeof(Button))]
 public class GameBrowserButtonController : MonoBehaviour
 {
     public string gameIpAndPort;
@@ -13,7 +13,7 @@ public class GameBrowserButtonController : MonoBehaviour
 
         Button button = GetComponent<Button>();
 
-        button.onClick.AddListener (JoinGame);
+        button.onClick.AddListener(JoinGame);
         button.GetComponentInChildren<Text>().text = gameName;
     }
 

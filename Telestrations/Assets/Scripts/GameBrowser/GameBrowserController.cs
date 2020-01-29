@@ -42,10 +42,16 @@ namespace Telestrations.GameBrowser
             }
         }
 
+        public void LeaveGameBrowser()
+        {
+            Destroy(Client.ClientConnection.gameObject);
+
+            SceneChanger.StaticChangeScene("StartScene");
+        }
+
         private void OnDestroy()
         {
             _serverFinder.OnGameServerFound -= OnGameServerFound;
-
             _serverFinder.Dispose();
         }
     }
